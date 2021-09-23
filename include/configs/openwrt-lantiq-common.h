@@ -20,7 +20,10 @@
 #define CONFIG_BOOTDELAY	2
 
 /* Environment */
-#if !defined(CONFIG_SYS_BOOT_RAM)
+#if !defined(CONFIG_SYS_BOOT_RAM)&&defined(CONFIG_SYS_BOOT_NANDSPL)
+#define CONFIG_BOOTCOMMAND \
+	"nboot kernel"
+#elif !defined(CONFIG_SYS_BOOT_RAM)
 #define CONFIG_BOOTCOMMAND \
 	"bootm ${kernel_addr}"
 #endif

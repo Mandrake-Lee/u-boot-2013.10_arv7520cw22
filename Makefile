@@ -436,7 +436,7 @@ ddr_settings:	board/$(BOARDDIR)/ddr_settings.h
 		awk -f tools/lantiq_ram_init_uart.awk -v soc=vr9 $< > $@
 
 $(obj)u-boot.asc:	ddr_settings $(obj)u-boot.srec
-		./scripts_platform/gct $^ $@
+		./tools/gct.pl $^ $@
 
 $(obj)u-boot.bin:	$(obj)u-boot
 		$(OBJCOPY) ${OBJCFLAGS} -O binary $< $@
@@ -982,6 +982,8 @@ clobber:	tidy
 	@rm -f $(obj)u-boot.imx
 	@rm -f $(obj)u-boot-with-spl.imx
 	@rm -f $(obj)u-boot-with-nand-spl.imx
+	@rm -f $(obj)u-boot.bin.lzo
+	@rm -f $(obj)u-boot.lzo.img
 	@rm -f $(obj)u-boot.ubl
 	@rm -f $(obj)u-boot.ais
 	@rm -f $(obj)u-boot.asc

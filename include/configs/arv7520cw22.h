@@ -21,17 +21,19 @@
 #define CONFIG_LTQ_SUPPORT_SPL_NAND_FLASH	/* Build NAND flash SPL */
 #define CONFIG_LTQ_SPL_COMP_LZO			/* Compress SPL with LZO */
 #define CONFIG_LTQ_SPL_CONSOLE			/* Enable SPL console */
+#define CONFIG_LTQ_SPL_DEBUG				/* Give some verbosity */
 
 #define CONFIG_SYS_NAND_PAGE_COUNT	64
 #define CONFIG_SYS_NAND_PAGE_SIZE	2048
 #define CONFIG_SYS_NAND_OOBSIZE		64
 #define CONFIG_SYS_NAND_BLOCK_SIZE	(128 * 1024)
 #define CONFIG_SYS_NAND_BAD_BLOCK_POS	NAND_LARGE_BADBLOCK_POS
-#define CONFIG_SYS_NAND_U_BOOT_OFFS	0x4000
-
-#define CONFIG_SYS_NAND_TPL_OFFS 0x800
 #define CONFIG_SYS_NAND_5_ADDR_CYCLE
-#define CONFIG_LTQ_SPL_DEBUG
+
+/* SPL/TPL boot parameter. Might need some tuning depending on arch, compiler... */
+#define CONFIG_SYS_NAND_U_BOOT_OFFS	0x8000
+#define CONFIG_SYS_NAND_TPL_OFFS 		0x4000
+
 
 #define CONFIG_SYS_BOOTM_LEN          0x1000000       /* 16 MB */
 
@@ -39,7 +41,8 @@
 #if defined(CONFIG_SYS_BOOT_NANDSPL)
 #define CONFIG_ENV_IS_IN_NAND
 #define CONFIG_ENV_OVERWRITE
-/* Because flash is so large, we will book 1Mb for the whole Uboot partition. Environment will occupy last 25%*/
+/* Because flash is so large, we will book 1Mb for the whole Uboot partition */
+/* Environment will occupy last 25% (256kb*/
 #define CONFIG_ENV_OFFSET		(3*256 * 1024)
 #define CONFIG_ENV_SECT_SIZE		(1*256 * 1024)
 #else
@@ -69,12 +72,21 @@
 #define CONFIG_CMD_MTDPARTS
 #define CONFIG_CMD_UBI
 #define CONFIG_RBTREE
+/* Define the same partitions as set in the openwrt device tree */
+#define CONFIG_MTDIDS_DEFAULT		"nand0=nand.0"
+#define CONFIG_MTDPARTS_DEFAULT	"mtdparts=nand.0:768k(u-boot),256k(u-boot-env),10m(kernel),-(ubifs)"
+#define CONFIG_ENV_MTD_SUPPORT	"mtdparts="CONFIG_MTDPARTS_DEFAULT"\0" \
+							"mtdids="CONFIG_MTDIDS_DEFAULT"\0"
+/* Other commands */
+#define CONFIG_CMD_MISC
+#define CONFIG_CMD_ECHO
 
 #define CONFIG_ENV_UPDATE_UBOOT_NAND					\
 	"update-uboot-nand=run load-uboot-nandspl-lzo write-uboot-nand\0"
 
 #define CONFIG_EXTRA_ENV_SETTINGS	\
 	CONFIG_ENV_LANTIQ_DEFAULTS	\
-	CONFIG_ENV_UPDATE_UBOOT_NAND
+	CONFIG_ENV_UPDATE_UBOOT_NAND	\
+	CONFIG_ENV_MTD_SUPPORT
 
 #endif /* __CONFIG_H */
